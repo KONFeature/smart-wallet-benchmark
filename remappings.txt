@@ -1,0 +1,8 @@
+forge-std/=lib/forge-std/src/
+solady/=lib/solady/src/
+FCL/=lib/FreshCryptoLib/solidity/src/
+safe-wallet/=lib/safe-smart-account/contracts/
+cometh-signer/=lib/p256-signer/contracts/
+gas-metering/=lib/forge-gas-metering/src/
+kernel/=lib/kernel/src/
+I4337/=lib/I4337/src/

@@ -1,6 +1,26 @@
+# Default profile config
 [profile.default]
-src = "src"
-out = "out"
-libs = ["lib"]
+    # Folder
+    src = "src"
+    out = "out"
+    libs = ["lib"]
+    # File access stuff
+    fs_permissions = [
+        # Gas folder write permissions for benchmark output
+        { access = "write", path = "./gas"}
+    ]
+    # Solidity version + EVM version
+    solc_version = '0.8.23'
+    evm_version = 'paris'
+    # Optimisation stuff
+    via-ir = false
+    runs = 1_000
+    # Remove bytecode hash at the end of compiled bytecode
+    bytecode_hash = "none"
 
-# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
+# Fuzzing config
+[fuzz]
+    runs = 256
+    seed = '0xacab'
+    include_storage = true
+    include_push_bytes = true
