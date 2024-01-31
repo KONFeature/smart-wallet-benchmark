@@ -133,16 +133,16 @@ contract SafeBenchmark is GenericMainnetBenchmark {
 
         // Build the safe tx hash
         bytes memory txData = Safe(_smartWallet).encodeTransactionData(
-                _to,
-                0, // value
-                _data,
-                Enum.Operation.Call,
-                0,
-                0,
-                0,
-                address(0),
-                _safeRefundBeneficiary,
-                _nonce
+            _to,
+            0, // value
+            _data,
+            Enum.Operation.Call,
+            0,
+            0,
+            0,
+            address(0),
+            _safeRefundBeneficiary,
+            _nonce
         );
 
         // Sign that hash with the owner key
