@@ -8,11 +8,16 @@ import {IMulticall3} from "multicall/interfaces/IMulticall3.sol";
 import {SafeProxyFactory} from "safe-wallet/proxies/SafeProxyFactory.sol";
 
 import {MULTICALL3_ADDRESS, MULTICALL3_BYTECODE} from "src/artifacts/Multicall3Constants.sol";
-import {SAFE_FACTORY_ADDRESS, SAFE_FACTORY_BYTECODE, SAFE_IMPLEMENTATION_ADDRESS, SAFE_IMPLEMENTATION_BYTECODE} from "src/artifacts/SafeConstants.sol";
+import {
+    SAFE_FACTORY_ADDRESS,
+    SAFE_FACTORY_BYTECODE,
+    SAFE_IMPLEMENTATION_ADDRESS,
+    SAFE_IMPLEMENTATION_BYTECODE
+} from "src/artifacts/SafeConstants.sol";
 
 /// @author KONFeature
 /// @title SafeEnv
-/// @dev Contract used to provide the safe runtime env 
+/// @dev Contract used to provide the safe runtime env
 contract SafeEnv is Test {
     /// @dev The multicall contract
     IMulticall3 internal _multicall;
@@ -42,5 +47,4 @@ contract SafeEnv is Test {
         // Create the safe beneficiary
         _safeRefundBeneficiary = makeAddr("safeRefundBeneficiary");
     }
-
 }

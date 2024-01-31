@@ -15,7 +15,8 @@ import {ERC4337Utils} from "kernel/utils/ERC4337Utils.sol";
 
 import {IEntryPoint} from "I4337/interfaces/IEntryPoint.sol";
 import {UserOperation} from "I4337/interfaces/UserOperation.sol";
-import {ENTRYPOINT_0_6_ADDRESS, ENTRYPOINT_0_6_BYTECODE} from "I4337/artifacts/EntryPoint_0_6.sol";
+
+import {KernelEnv} from "./KernelEnv.sol";
 
 using ERC4337Utils for IEntryPoint;
 using ERC4337Utils for Kernel;
@@ -23,16 +24,7 @@ using ERC4337Utils for Kernel;
 /// @dev Contract used to benchmark kernel ecdsa operations
 /// @dev todo : To be rly clean, we should use bytecode of deployed kernel factory, kernel account, and ecdsa validator
 /// @author KONFeature
-contract KernelEcdsaBenchmark is GenericMainnetBenchmark {
-    /// @dev The kernel factory that will be used for the test
-    KernelFactory private _factory;
-
-    /// @dev The kernel impl that will be used for the test
-    address private _kernelImplementation;
-
-    /// @dev The erc-4337 entrypoint that will be used for the test
-    IEntryPoint internal _entryPoint;
-
+contract KernelEcdsaBenchmark is GenericMainnetBenchmark, KernelEnv {
     /// @dev The current validator we will benchmark
     ECDSAValidator private _ecdsaValidator;
 
@@ -40,26 +32,9 @@ contract KernelEcdsaBenchmark is GenericMainnetBenchmark {
     address private _ecdsaOwner;
     uint256 private _ecdsaOwnerKey;
 
-    /// @dev The user op beneficiary
-    address private _userOpBeneficiary;
-
     function setUp() public {
         _init();
-
-        address factoryOwner = makeAddr("factoryOwner");
-        _userOpBeneficiary = payable(makeAddr("userOpBeneficiary"));
-
-        // Init of the entry point
-        vm.etch(ENTRYPOINT_0_6_ADDRESS, ENTRYPOINT_0_6_BYTECODE);
-        _entryPoint = IEntryPoint(payable(ENTRYPOINT_0_6_ADDRESS));
-
-        // Deploy initial kernel implementation and factory
-        _kernelImplementation = address(new Kernel(_entryPoint));
-        _factory = new KernelFactory(factoryOwner, _entryPoint);
-
-        // Allow the factory to create new kernel
-        vm.prank(factoryOwner);
-        _factory.setImplementation(_kernelImplementation, true);
+        _setupKernelEnv();
 
         // Deploy the ecdsa validator
         _ecdsaValidator = new ECDSAValidator();

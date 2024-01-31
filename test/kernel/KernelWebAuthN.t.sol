@@ -22,24 +22,17 @@ import {IEntryPoint} from "I4337/interfaces/IEntryPoint.sol";
 import {UserOperation} from "I4337/interfaces/UserOperation.sol";
 import {ENTRYPOINT_0_6_ADDRESS, ENTRYPOINT_0_6_BYTECODE} from "I4337/artifacts/EntryPoint_0_6.sol";
 
+import {KernelEnv} from "./KernelEnv.sol";
+
 using ERC4337Utils for IEntryPoint;
 using ERC4337Utils for Kernel;
 
 /// @dev Contract used to benchmark kernel webauthn operations
 /// @dev todo : To be rly clean, we should use bytecode of deployed kernel factory, kernel account, and ecdsa validator
 /// @author KONFeature
-contract KernelWebAuthNBenchmark is GenericMainnetBenchmark {
+contract KernelWebAuthNBenchmark is GenericMainnetBenchmark, KernelEnv {
     // Curve order (number of points)
     uint256 constant n = 0xFFFFFFFF00000000FFFFFFFFFFFFFFFFBCE6FAADA7179E84F3B9CAC2FC632551;
-
-    /// @dev The kernel factory that will be used for the test
-    KernelFactory private _factory;
-
-    /// @dev The kernel impl that will be used for the test
-    address private _kernelImplementation;
-
-    /// @dev The erc-4337 entrypoint that will be used for the test
-    IEntryPoint internal _entryPoint;
 
     /// @dev The current validator we will benchmark
     WebAuthnFclValidator private _webAuthnFclValidator;
@@ -55,26 +48,9 @@ contract KernelWebAuthNBenchmark is GenericMainnetBenchmark {
     uint256 private _ownerY;
     uint256 private _ownerPrivateKey;
 
-    /// @dev The user op beneficiary
-    address private _userOpBeneficiary;
-
     function setUp() public {
         _init();
-
-        address factoryOwner = makeAddr("factoryOwner");
-        _userOpBeneficiary = payable(makeAddr("userOpBeneficiary"));
-
-        // Init of the entry point
-        vm.etch(ENTRYPOINT_0_6_ADDRESS, ENTRYPOINT_0_6_BYTECODE);
-        _entryPoint = IEntryPoint(payable(ENTRYPOINT_0_6_ADDRESS));
-
-        // Deploy initial kernel implementation and factory
-        _kernelImplementation = address(new Kernel(_entryPoint));
-        _factory = new KernelFactory(factoryOwner, _entryPoint);
-
-        // Allow the factory to create new kernel
-        vm.prank(factoryOwner);
-        _factory.setImplementation(_kernelImplementation, true);
+        _setupKernelEnv();
 
         // Deploy the webauthn validator
         _p256Wrapper = new P256VerifierWrapper();
