@@ -165,8 +165,6 @@ contract SafeComethBenchmark is GenericMainnetBenchmark, SafeEnv {
         override
         returns (bytes memory _encodedCallData, address _executor)
     {
-        // Skip test relying on that for now, since not working
-        vm.skip(true);
 
         // Generate a signature for this transaction
         bytes memory signature = _generateSignature(payable(_smartWallet), _to, _data);
@@ -182,7 +180,7 @@ contract SafeComethBenchmark is GenericMainnetBenchmark, SafeEnv {
             0,
             0,
             address(0),
-            _safeRefundBeneficiary,
+            address(0),
             signature
         );
         _executor = _smartWallet;
@@ -209,7 +207,7 @@ contract SafeComethBenchmark is GenericMainnetBenchmark, SafeEnv {
             0,
             0,
             address(0),
-            _safeRefundBeneficiary,
+            address(0),
             _nonce
         );
 
@@ -231,10 +229,10 @@ contract SafeComethBenchmark is GenericMainnetBenchmark, SafeEnv {
 
         // The signature type (0 to specify it's a contract signature)
         // todo: uint8 or uint16?
-        uint16 signatureType = 0;
+        uint8 signatureType = 0;
 
         // Return the packed stuff
-        return abi.encodePacked(verifierAndDataPosition, signatureLength, signatureType, _signature);
+        return abi.encodePacked(verifierAndDataPosition, signatureType, signatureLength, _signature);
     }
 
     /* -------------------------------------------------------------------------- */
