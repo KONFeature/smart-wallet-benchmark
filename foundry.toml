@@ -6,8 +6,8 @@
     libs = ["lib"]
     # File access stuff
     fs_permissions = [
-        # Gas folder write permissions for benchmark output
-        { access = "write", path = "./gas"}
+        # Gas folder r/w permissions for benchmark output
+        { access = "read-write", path = "./gas"}
     ]
     # Solidity version + EVM version
     solc_version = '0.8.23'
