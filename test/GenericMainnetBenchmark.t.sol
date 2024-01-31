@@ -17,10 +17,6 @@ abstract contract GenericMainnetBenchmark is MainnetMetering, Test {
     /// todo: should be marked internal to prevent benchmarked conract to update it
     DummyContract internal _dummyContract;
 
-    /// @dev The base smart wallet address that will be used
-    /// todo: Should it be novzd in a modifier to managed test per test deployment of it?
-    address private _baseSmartWallet;
-
     /// @dev Init the base stuff required to run the benchmark
     function _init() internal {
         // Prepare for gas mettering
@@ -37,7 +33,7 @@ abstract contract GenericMainnetBenchmark is MainnetMetering, Test {
     /// @dev Get the current smart wallet name (will be used for the different outputs)
     function _getSmartWalletName() internal view virtual returns (string memory);
 
-    /// @dev Top level method used to create the smart wallet
+    /// @dev Top level method used to encode smart wallet creation code
     /// @param _salt The salt used to create the smart wallet, could be used during fuzz testing
     /// todo: Check the usefullness of the salt
     /// @return _deploymentData The encoded data that will be used to deploy the smart wallet
@@ -48,19 +44,26 @@ abstract contract GenericMainnetBenchmark is MainnetMetering, Test {
         virtual
         returns (bytes memory _deploymentData, address _deploymentFactory);
 
+    /// @dev Top level method used to create the smart wallet
+    /// @param _salt The salt used to create the smart wallet, could be used during fuzz testing
+    /// todo: Check the usefullness of the salt
+    /// @return _smartWallet The address of the deployed smart wallet
+    function _createSmartWallet(bytes32 _salt) internal virtual returns (address _smartWallet);
+
     /// @dev Encode the call data to be executed by the smart wallet
+    /// @param _smartWallet The address of the smart wallet that will execute the call
     /// @param _to The address of the contract to be called
     /// @param _data The execution data to be encoded
     /// @return _encodedCallData The encoded call data
-    /// @return _entryPoint The entry point to execute this encoded call data
-    function _encodeCallData(address _to, bytes memory _data)
+    /// @return _executor The entry point to execute this encoded call data
+    function _encodeCallData(address _smartWallet, address _to, bytes memory _data)
         internal
         view
         virtual
-        returns (bytes memory _encodedCallData, address _entryPoint);
+        returns (bytes memory _encodedCallData, address _executor);
 
     /* -------------------------------------------------------------------------- */
-    /*                        Test smart wallet deployment                        */
+    /*                           Benchmark SW deployment                          */
     /* -------------------------------------------------------------------------- */
 
     /// @dev Test a simple call to the dummy contract for reference in the json
@@ -99,6 +102,33 @@ abstract contract GenericMainnetBenchmark is MainnetMetering, Test {
 
         // Add the result to the output
         _addResult("deploy", gasConsumed);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                              Benchmark SW call                             */
+    /* -------------------------------------------------------------------------- */
+
+    /// @dev Test a simple smart wallet deployment
+    function test_execute() public manuallyMetered {
+        // Get a smart wallet
+        address smartWallet = _createSmartWallet(0x0);
+
+        // Get the contract call data
+        (bytes memory _callData, address _executor) =
+            _encodeCallData(smartWallet, address(_dummyContract), _getDummyCallData());
+
+        // Meter the deployment
+        (uint256 gasConsumed,) = meterCall({
+            from: address(0),
+            to: _executor,
+            callData: _callData,
+            value: 0,
+            transaction: true,
+            expectRevert: false
+        });
+
+        // Add the result to the output
+        _addResult("execute", gasConsumed);
     }
 
     /* -------------------------------------------------------------------------- */
@@ -150,7 +180,7 @@ abstract contract GenericMainnetBenchmark is MainnetMetering, Test {
             return;
         } else {
             // Otherwise, read the json, add the key, and write it back
-            // todo: more efficient way to do this? 
+            // todo: more efficient way to do this?
             string memory writerCreatorKey = string.concat(writerKey, "-", _testCase, ".keyCreator");
             vm.serializeJson(writerCreatorKey, jsonContent);
             string memory newJsonEntry = vm.serializeUint(writerCreatorKey, _testCase, _gasUsed);
