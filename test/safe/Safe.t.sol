@@ -16,7 +16,7 @@ contract SafeBenchmark is GenericMainnetBenchmark {
     /// @dev The kernel factory that will be used for the test
     SafeProxyFactory private _factory;
 
-    /// @dev The kernel account that will be used for the test
+    /// @dev The safe implementation that will be used for the test
     address private _safeImplementation;
 
     /// @dev the owner of the kernel wallet we will test

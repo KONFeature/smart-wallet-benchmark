@@ -6,3 +6,4 @@ cometh-signer/=lib/p256-signer/contracts/
 gas-metering/=lib/forge-gas-metering/src/
 kernel/=lib/kernel/src/
 I4337/=lib/I4337/src/
+multicall/=lib/multicall/src/
