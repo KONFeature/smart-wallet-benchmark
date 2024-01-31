@@ -165,7 +165,6 @@ contract SafeComethBenchmark is GenericMainnetBenchmark, SafeEnv {
         override
         returns (bytes memory _encodedCallData, address _executor)
     {
-
         // Generate a signature for this transaction
         bytes memory signature = _generateSignature(payable(_smartWallet), _to, _data);
 
