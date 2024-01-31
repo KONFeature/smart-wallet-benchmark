@@ -23,12 +23,11 @@ using ERC4337Utils for Kernel;
 /// @dev Contract used to benchmark kernel ecdsa operations
 /// @dev todo : To be rly clean, we should use bytecode of deployed kernel factory, kernel account, and ecdsa validator
 /// @author KONFeature
-contract KernelEcdsa is GenericMainnetBenchmark {
+contract KernelEcdsaBenchmark is GenericMainnetBenchmark {
     /// @dev The kernel factory that will be used for the test
     KernelFactory private _factory;
 
-    /// @dev The kernel account that will be used for the test
-    Kernel private _kernel;
+    /// @dev The kernel impl that will be used for the test
     address private _kernelImplementation;
 
     /// @dev The erc-4337 entrypoint that will be used for the test
