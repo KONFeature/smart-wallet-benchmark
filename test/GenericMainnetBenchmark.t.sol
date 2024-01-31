@@ -58,7 +58,6 @@ abstract contract GenericMainnetBenchmark is MainnetMetering, Test {
     /// @return _executor The entry point to execute this encoded call data
     function _encodeCallData(address _smartWallet, address _to, bytes memory _data)
         internal
-        view
         virtual
         returns (bytes memory _encodedCallData, address _executor);
 

@@ -9,35 +9,22 @@ import {SafeProxyFactory} from "safe-wallet/proxies/SafeProxyFactory.sol";
 import {Safe} from "safe-wallet/Safe.sol";
 import {Enum} from "safe-wallet/common/Enum.sol";
 
+import {SafeEnv} from "./SafeEnv.sol";
+
 /// @dev Contract used to benchmark safe operations
 /// @dev todo : To be rly clean, we should use bytecode of deployed safe and safe proxy
 /// @author KONFeature
-contract SafeBenchmark is GenericMainnetBenchmark {
-    /// @dev The kernel factory that will be used for the test
-    SafeProxyFactory private _factory;
-
-    /// @dev The safe implementation that will be used for the test
-    address private _safeImplementation;
-
+contract SafeBenchmark is GenericMainnetBenchmark, SafeEnv {
     /// @dev the owner of the kernel wallet we will test
     address private _safeOwner;
     uint256 private _safeOwnerKey;
 
-    /// @dev The safe beneficiary
-    address private _safeRefundBeneficiary;
-
     function setUp() public {
         _init();
-
-        // Deploy initial kernel implementation and factory
-        _safeImplementation = address(new Safe());
-        _factory = new SafeProxyFactory();
+        _setupSafeEnv();
 
         // Create the ecdsa owner
         (_safeOwner, _safeOwnerKey) = makeAddrAndKey("safeOwner");
-
-        // Create the safe beneficiary
-        _safeRefundBeneficiary = makeAddr("safeRefundBeneficiary");
     }
 
     /// @dev Get the current smart wallet name (will be used for the different outputs)
