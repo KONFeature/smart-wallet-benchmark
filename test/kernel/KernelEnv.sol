@@ -36,19 +36,22 @@ contract KernelEnv is Test {
 
     /// @dev Setup safe environment
     function _setupKernelEnv() internal {
-        _userOpBeneficiary = payable(makeAddr("userOpBeneficiary"));
+        _userOpBeneficiary = payable(address(1));
         _factoryOwner = makeAddr("factoryOwner");
 
         // Init of the entry point
         vm.etch(ENTRYPOINT_0_6_ADDRESS, ENTRYPOINT_0_6_BYTECODE);
+        vm.label(ENTRYPOINT_0_6_ADDRESS, "entrypoint");
         _entryPoint = IEntryPoint(payable(ENTRYPOINT_0_6_ADDRESS));
 
         // Setup the factory
         vm.etch(KERNEL_FACTORY_ADDRESS, KERNEL_FACTORY_BYTECODE);
+        vm.label(KERNEL_FACTORY_ADDRESS, "kernelFactory");
         _factory = KernelFactory(KERNEL_FACTORY_ADDRESS);
 
         // Set initial kernel implementation
         vm.etch(KERNEL_IMPLEMENTATION_ADDRESS, KERNEL_IMPLEMENTATION_BYTECODE);
+        vm.label(KERNEL_IMPLEMENTATION_ADDRESS, "kernelImplementation");
         _kernelImplementation = KERNEL_IMPLEMENTATION_ADDRESS;
 
         // Allow the implementation

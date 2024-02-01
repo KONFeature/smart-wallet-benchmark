@@ -62,10 +62,12 @@ contract SafeComethBenchmark is GenericMainnetBenchmark, SafeEnv {
 
         // Init of the p256 factory
         vm.etch(P256_FACTORY_ADDRESS, P256_FACTORY_BYTECODE);
+        vm.label(P256_FACTORY_ADDRESS, "comethP256factory");
         _p256Factory = IP256SignerFactory(P256_FACTORY_ADDRESS);
 
         // Deploy initial p256 implementation and factory
         vm.etch(P256_IMPLEMENTATION_ADDRESS, P256_IMPLEMENTATION_BYTECODE);
+        vm.label(P256_IMPLEMENTATION_ADDRESS, "p256Implementation");
         _p256Implementation = P256_IMPLEMENTATION_ADDRESS;
 
         // Create the ecdsa owner

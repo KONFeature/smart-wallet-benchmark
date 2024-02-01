@@ -35,13 +35,16 @@ contract SafeEnv is Test {
     function _setupSafeEnv() internal {
         // Setup the multicall contract
         vm.etch(MULTICALL3_ADDRESS, MULTICALL3_BYTECODE);
+        vm.label(MULTICALL3_ADDRESS, "multicall3");
         _multicall = IMulticall3(MULTICALL3_ADDRESS);
 
         // Set initial safe implementation and factory
         vm.etch(SAFE_IMPLEMENTATION_ADDRESS, SAFE_IMPLEMENTATION_BYTECODE);
+        vm.label(SAFE_IMPLEMENTATION_ADDRESS, "safeImplementation");
         _safeImplementation = SAFE_IMPLEMENTATION_ADDRESS;
 
         vm.etch(SAFE_FACTORY_ADDRESS, SAFE_FACTORY_BYTECODE);
+        vm.label(SAFE_FACTORY_ADDRESS, "safeFactory");
         _factory = SafeProxyFactory(SAFE_FACTORY_ADDRESS);
 
         // Create the safe beneficiary

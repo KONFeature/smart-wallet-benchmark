@@ -20,7 +20,8 @@ import {Base64Url} from "FCL/utils/Base64Url.sol";
 
 import {IEntryPoint} from "I4337/interfaces/IEntryPoint.sol";
 import {UserOperation} from "I4337/interfaces/UserOperation.sol";
-import {ENTRYPOINT_0_6_ADDRESS, ENTRYPOINT_0_6_BYTECODE} from "I4337/artifacts/EntryPoint_0_6.sol";
+
+import {VALIDATOR_WEBAUTHN_ADDRESS, VALIDATOR_WEBAUTHN_BYTECODE, P256_WRAPPER_ADDRESS, P265_WRAPPER_BYTECODE} from "src/artifacts/KernelConstants.sol";
 
 import {KernelEnv} from "./KernelEnv.sol";
 
@@ -53,8 +54,13 @@ contract KernelWebAuthNBenchmark is GenericMainnetBenchmark, KernelEnv {
         _setupKernelEnv();
 
         // Deploy the webauthn validator
-        _p256Wrapper = new P256VerifierWrapper();
-        _webAuthnFclValidator = new WebAuthnFclValidator(address(_p256Wrapper));
+        vm.etch(P256_WRAPPER_ADDRESS, P265_WRAPPER_BYTECODE);
+        vm.label(P256_WRAPPER_ADDRESS, "p256Wrapper");
+        _p256Wrapper = P256VerifierWrapper(P256_WRAPPER_ADDRESS);
+        
+        vm.etch(VALIDATOR_WEBAUTHN_ADDRESS, VALIDATOR_WEBAUTHN_BYTECODE);
+        vm.label(VALIDATOR_WEBAUTHN_ADDRESS, "webAuthnValidator");
+        _webAuthnFclValidator = WebAuthnFclValidator(VALIDATOR_WEBAUTHN_ADDRESS);
 
         // Deploy our helper
         _webAuthNHelper = new WebAuthNHelper();
